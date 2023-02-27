@@ -13,8 +13,8 @@ import * as publicUserActions from '../actions/roles/public-user.role'
 import { Counter } from 'k6/metrics';
 
 /**
- * This is a SEEDING script. Do not run as a performance test. 
- * 
+ * This is a SEEDING script. Do not run as a performance test.
+ *
  * It creates crocodiles on the following app:
  * https://test-api.loadimpact.com/
  * for use by the performance tests (a Soak test in this case).
@@ -35,7 +35,7 @@ const CROCODILE_OWNER: User = {
   password: 'superCroc2019'
 }
 
-const BASE_URL = 'https://test-api.loadimpact.com';
+const BASE_URL = 'https://test-api.k6.io';
 
 // The Setup Function is run once before the Load Test https://docs.k6.io/docs/test-life-cycle
 export function setup() {
@@ -57,7 +57,7 @@ export default (_authToken: string) => {
   group('Create crocs', () => {
 
     const requestConfigWithTag = createRequestConfigWithTag(_authToken); // Sets the auth token in the header of requests and the 'public requests' tag
-    
+
     let URL = `${BASE_URL}/my/crocodiles/`;
 
     // returns an updated URL that contains the crocodile ID - could be saved to an array and eventually to a JSON file for use in performance tests.
@@ -67,7 +67,7 @@ export default (_authToken: string) => {
 
   // sleeps help keep your script realistic https://docs.k6.io/docs/sleep-t-1
   setSleep();
-} 
+}
 
 export function teardown() {
   // you can add functionality here to save the crocodile IDs to a JSON file for use by the performance tests.

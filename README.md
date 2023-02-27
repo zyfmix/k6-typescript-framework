@@ -17,6 +17,12 @@ in the terminal (you need to have [yarn](https://yarnpkg.com/getting-started/ins
 
 Now run the test using the following command: 
 
+if Node.js > 16
+
+`export NODE_OPTIONS=--openssl-legacy-provider`
+
+* [webpack-build-failing-with-err-ossl-evp-unsupported](https://stackoverflow.com/questions/69394632/webpack-build-failing-with-err-ossl-evp-unsupported)
+
 `yarn go:k6` 
 
 This will run the [soak.test.ts](/src/tests/soak.test.ts) script, using **k6**.
