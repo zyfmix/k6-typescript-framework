@@ -1,16 +1,16 @@
-import { group } from 'k6';
-import { Options } from 'k6/options';
+import {group} from 'k6';
+import {Options} from 'k6/options';
 
-import { randomString } from '../lib/test-data.helpers'
-import { createRequestConfigWithTag } from '../lib/request.helpers';
-import { setSleep } from '../lib/sleep.helpers'
+import {randomString} from '../lib/test-data.helpers'
+import {createRequestConfigWithTag} from '../lib/request.helpers';
+import {setSleep} from '../lib/sleep.helpers'
 
-import { User } from '../lib/types/framework.types'
+import {User} from '../lib/types/framework.types'
 
 import * as crocodileOwnerActions from '../actions/roles/crocodile-owner.role'
 import * as adminActions from '../actions/roles/admin.role'
 import * as publicUserActions from '../actions/roles/public-user.role'
-import { Counter } from 'k6/metrics';
+import {Counter} from 'k6/metrics';
 
 /**
  * This is a SEEDING script. Do not run as a performance test.
@@ -22,17 +22,17 @@ import { Counter } from 'k6/metrics';
 
 // Test Options https://docs.k6.io/docs/options
 export let options: Partial<Options> = {
- // This script runs for 5 iterations and therefore creates 5 crocodiles.
- iterations: 5
+    // This script runs for 5 iterations and therefore creates 5 crocodiles.
+    iterations: 5
 };
 
 let numberOfCrocodilesCreated = new Counter("NumberOfCrocodilesCreated")
 
 const CROCODILE_OWNER: User = {
-  first_name: "Crocodile",
-  last_name: "Owner",
-  username: `${randomString(10)}@example.com`,  // Set your own email or `${randomString(10)}@example.com`;,
-  password: 'superCroc2019'
+    first_name: "Crocodile",
+    last_name: "Owner",
+    username: `${randomString(10)}@example.com`,  // Set your own email or `${randomString(10)}@example.com`;,
+    password: 'superCroc2019'
 }
 
 const BASE_URL = 'https://test-api.k6.io';
@@ -40,35 +40,35 @@ const BASE_URL = 'https://test-api.k6.io';
 // The Setup Function is run once before the Load Test https://docs.k6.io/docs/test-life-cycle
 export function setup() {
 
-  // admin user can create a new user without logging in - this is just a test system
-  adminActions.registerNewUser(CROCODILE_OWNER, BASE_URL);
+    // admin user can create a new user without logging in - this is just a test system
+    adminActions.registerNewUser(CROCODILE_OWNER, BASE_URL);
 
-  // new user 'Crocodile Owner' logs in and returns the auth token
-  const authToken = crocodileOwnerActions.login(CROCODILE_OWNER, BASE_URL);
+    // new user 'Crocodile Owner' logs in and returns the auth token
+    const authToken = crocodileOwnerActions.login(CROCODILE_OWNER, BASE_URL);
 
-  // anything returned here can be imported into the default function https://docs.k6.io/docs/test-life-cycle
-  return authToken;
+    // anything returned here can be imported into the default function https://docs.k6.io/docs/test-life-cycle
+    return authToken;
 }
 
 // default function (imports the Bearer token) https://docs.k6.io/docs/test-life-cycle
 export default (_authToken: string) => {
 
-  // Private actions - you need to be logged in to do these
-  group('Create crocs', () => {
+    // Private actions - you need to be logged in to do these
+    group('Create crocs', () => {
 
-    const requestConfigWithTag = createRequestConfigWithTag(_authToken); // Sets the auth token in the header of requests and the 'public requests' tag
+        const requestConfigWithTag = createRequestConfigWithTag(_authToken); // Sets the auth token in the header of requests and the 'public requests' tag
 
-    let URL = `${BASE_URL}/my/crocodiles/`;
+        let URL = `${BASE_URL}/my/crocodiles/`;
 
-    // returns an updated URL that contains the crocodile ID - could be saved to an array and eventually to a JSON file for use in performance tests.
-    crocodileOwnerActions.createCrocodile(requestConfigWithTag, URL, numberOfCrocodilesCreated);
+        // returns an updated URL that contains the crocodile ID - could be saved to an array and eventually to a JSON file for use in performance tests.
+        crocodileOwnerActions.createCrocodile(requestConfigWithTag, URL, numberOfCrocodilesCreated);
 
-  });
+    });
 
-  // sleeps help keep your script realistic https://docs.k6.io/docs/sleep-t-1
-  setSleep();
+    // sleeps help keep your script realistic https://docs.k6.io/docs/sleep-t-1
+    setSleep();
 }
 
 export function teardown() {
-  // you can add functionality here to save the crocodile IDs to a JSON file for use by the performance tests.
+    // you can add functionality here to save the crocodile IDs to a JSON file for use by the performance tests.
 }

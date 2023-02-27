@@ -29,3 +29,5 @@ ENV=${1:-"-"}
 echo "启动应用服务..."
 
 yarn monitors
+
+#http://brtc-opentest.baijiayun.com:3000
